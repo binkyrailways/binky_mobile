@@ -6,7 +6,7 @@ dependencies:
     sdk: flutter
   args: "^1.2.0"
   mqtt:
-    git: https://github.com/jnguillerme/mqtt.dart.git
+    git: https://github.com/ewoutp/mqtt.dart.git
   utf: "^0.9.0+3"
   ini: "^1.1.0"
   unittest: "any"
