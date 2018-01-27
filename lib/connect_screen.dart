@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'server_client.dart';
 
 typedef void ConnectedCallback(ServerClient client);
@@ -14,12 +16,31 @@ class ConnectScreen extends StatefulWidget {
 }
 
 class ConnectScreenState extends State<ConnectScreen> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final ConnectedCallback _connected;
   final TextEditingController _mqttHostController = new TextEditingController();
-  final TextEditingController _mqttPortController =new TextEditingController(text: "1883");
-  final TextEditingController _mqttTopicController =new TextEditingController(text: "/binkyrailways");
+  final TextEditingController _mqttPortController = new TextEditingController(text: "1883");
+  final TextEditingController _mqttTopicController = new TextEditingController(text: "/binkyrailways");
 
   ConnectScreenState(this._connected);
+
+  Future<Null> _loadPreferences() async {
+    final SharedPreferences prefs = await _prefs;
+    final String mqttHost = prefs.getString('mqtt.host') ?? "";
+    final int mqttPort = prefs.getInt("mqtt.port") ?? 1883;
+    final String mqttTopic = prefs.getString("mqtt.topic") ?? "/binkyrailways";
+    setState(() {
+      _mqttHostController.text = mqttHost;
+      _mqttPortController.text = mqttPort.toString();
+      _mqttTopicController.text = mqttTopic;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,5 +116,10 @@ class ConnectScreenState extends State<ConnectScreen> {
     var portNum = int.parse(port);
     var client = await ServerClient.connect(host, portNum, topic);
     _connected(client);
+    // Save preferences
+    final SharedPreferences prefs = await _prefs;
+    prefs.setString('mqtt.host', host);
+    prefs.setInt("mqtt.port", portNum);
+    prefs.setString("mqtt.topic", topic);
   }
 }
