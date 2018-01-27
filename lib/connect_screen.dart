@@ -21,6 +21,8 @@ class ConnectScreenState extends State<ConnectScreen> {
   final TextEditingController _mqttHostController = new TextEditingController();
   final TextEditingController _mqttPortController = new TextEditingController(text: "1883");
   final TextEditingController _mqttTopicController = new TextEditingController(text: "/binkyrailways");
+  bool _inputValid = false;
+  bool _connecting = false;
 
   ConnectScreenState(this._connected);
 
@@ -33,6 +35,7 @@ class ConnectScreenState extends State<ConnectScreen> {
       _mqttHostController.text = mqttHost;
       _mqttPortController.text = mqttPort.toString();
       _mqttTopicController.text = mqttTopic;
+      _validateFieldValues();
     });
   }
 
@@ -53,13 +56,17 @@ class ConnectScreenState extends State<ConnectScreen> {
             new Container(child: new Icon(Icons.wifi), margin: new EdgeInsets.symmetric(horizontal: 5.0)),
           ]),
        ),
-      body: _buildTextComposer(),
+      body: _connecting ? new Center(child: new Text("Connecting ...")) : _buildTextComposer(),
+      floatingActionButton: new FloatingActionButton(
+        child: new Icon(Icons.check),
+        onPressed: _inputValid ? _handleConnect : null,
+      ),
     );
   }
 
   Widget _buildTextComposer() {
     return new IconTheme(
-        data: new IconThemeData(color: Theme.of(context).accentColor), //new
+        data: new IconThemeData(color: Theme.of(context).accentColor),
         child: new Form(
           child: new Column(
             children: <Widget>[
@@ -68,58 +75,71 @@ class ConnectScreenState extends State<ConnectScreen> {
                       new EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
                   child: new TextField(
                     controller: _mqttHostController,
+                    onChanged: (x) => _validateFieldValues(),
                     keyboardType: TextInputType.url,
                     autocorrect: false,
                     //obscureText: true,
                     inputFormatters: [],
                     decoration:
-                        new InputDecoration.collapsed(hintText: "MQTT Address"),
+                        new InputDecoration(labelText: "MQTT Host", hintText: "host name or IP address"),
                   )),
               new Container(
                   margin:
                       new EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
                   child: new TextField(
                     controller: _mqttPortController,
+                    onChanged: (x) => _validateFieldValues(),
                     keyboardType: TextInputType.number,
                     autocorrect: false,
                     inputFormatters: [],
                     decoration:
-                        new InputDecoration.collapsed(hintText: "MQTT Port"),
+                        new InputDecoration(labelText: "MQTT Port", hintText: "1883"),
                   )),
               new Container(
                   margin:
                       new EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
                   child: new TextField(
                     controller: _mqttTopicController,
+                    onChanged: (x) => _validateFieldValues(),
                     keyboardType: TextInputType.url,
                     autocorrect: false,
                     //obscureText: true,
                     inputFormatters: [],
                     decoration:
-                        new InputDecoration.collapsed(hintText: "MQTT Topic"),
+                        new InputDecoration(labelText: "MQTT topic", hintText: "/binkyrailways"),
                   )),
-              new Container(
-                margin:
-                    new EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
-                child: new RaisedButton(
-                    child: new Text("Connect"),
-                    onPressed: () => _handleConnect(
-                        _mqttHostController.text, _mqttPortController.text, _mqttTopicController.text)),
-              )
             ],
           ),
         ));
   }
 
-  Future<Null> _handleConnect(String host, String port, String topic) async {
-    debugPrint(host + ":" + port);
-    var portNum = int.parse(port);
-    var client = await ServerClient.connect(host, portNum, topic);
-    _connected(client);
-    // Save preferences
-    final SharedPreferences prefs = await _prefs;
-    prefs.setString('mqtt.host', host);
-    prefs.setInt("mqtt.port", portNum);
-    prefs.setString("mqtt.topic", topic);
+  void _validateFieldValues() {
+    var host = _mqttHostController.text;
+    var port = _mqttPortController.text;
+    var topic = _mqttTopicController.text;
+    var portNum = int.parse(port, onError: (source) => null);
+    var isValid = (host != "") && (topic != "") && (portNum != null);
+    setState(() => _inputValid = isValid);
+  }
+
+  Future<Null> _handleConnect() async {
+    var host = _mqttHostController.text;
+    var port = _mqttPortController.text;
+    var topic = _mqttTopicController.text;
+    var portNum = int.parse(port, onError: (source) => null);
+    if ((host != "") && (topic != "") && (portNum != null)) {
+      setState(() => _connecting = true);
+      try{
+        var client = await ServerClient.connect(host, portNum, topic);
+        _connected(client);
+        // Save preferences
+        final SharedPreferences prefs = await _prefs;
+        prefs.setString('mqtt.host', host);
+        prefs.setInt("mqtt.port", portNum);
+        prefs.setString("mqtt.topic", topic);
+      } catch(e) {
+        setState(() => _connecting = false);
+      }
+    }
   }
 }
