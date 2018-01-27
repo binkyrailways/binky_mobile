@@ -22,7 +22,7 @@ class ServerClient {
         print("MQTT connection lost");
         controller.close();
       });
-      client.subscribe(topic, QOS_0, (t, d) {
+      client.subscribe(topic + "/data", QOS_0, (t, d) {
         var msg = JSON.decode(d);
         print("topic: $t, data: $msg");
         controller.add(msg);
@@ -36,4 +36,9 @@ class ServerClient {
   }
 
   Stream<dynamic> get messages => _messages;
+
+  publishControlMessage(dynamic msg) async {
+    var payload = JSON.encode(msg);
+    _client.publish(_topic + "/control", payload);
+  }
 }

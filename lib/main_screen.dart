@@ -20,10 +20,7 @@ class MainScreenState extends State<MainScreen> {
       case MainScreenViewState.connect:
         return new ConnectScreen(_onConnected);
       default:
-        return new Scaffold(
-          appBar: new AppBar(title: new Text("BinkyRailways")),
-          body: new RailwayScreen(_client),
-        );
+        return new RailwayScreen(_client);
     }
   }
 
