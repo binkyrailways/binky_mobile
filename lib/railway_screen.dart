@@ -7,20 +7,24 @@ import 'server_client.dart';
 
 class RailwayScreen extends StatefulWidget {
   final ServerClient _client;
+  final VoidCallback _onConnectionSettings;
 
-  RailwayScreen(this._client);
+  RailwayScreen(this._client, this._onConnectionSettings);
 
   @override
-  State createState() => new RailwayScreenState(_client);
+  State createState() => new RailwayScreenState(_client, _onConnectionSettings);
 }
 
 class RailwayScreenState extends State<RailwayScreen> {
   final ServerClient _client;
+  final VoidCallback _onConnectionSettings;
   final RailwayState _railwayState = new RailwayState();
+  String _description = "Binky Railways";
   bool _isRunning = false;
   StreamSubscription<dynamic> _clientSubscription;
 
-  RailwayScreenState(this._client);
+  // Default ctor
+  RailwayScreenState(this._client, this._onConnectionSettings);
 
     @override  
   void initState() {
@@ -37,22 +41,45 @@ class RailwayScreenState extends State<RailwayScreen> {
 
   void _processDataMessage(dynamic msg) {
     _railwayState.processDataMessage(msg);
-    setState(() => _isRunning = _railwayState.isRunning);
+    setState(() {
+      _description = _railwayState.description;
+      _isRunning = _railwayState.isRunning;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isRunning) {
       return new Scaffold(
-        appBar: new AppBar(title: new Text("BinkyRailways")),
+        appBar: new AppBar(
+          title: new Text(_description),
+          actions: [
+            new IconButton(
+              icon: new Icon(Icons.settings),
+              onPressed: _onConnectionSettings,
+            ),
+          ],
+        ),
         body: new Column(children: [
-          new RailwayStateControlPanel(_client, _railwayState),
-          new Center(child: new Text("Running")),
+          new Card(
+            child: new Container(
+              margin: new EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: new RailwayStateControlPanel(_client, _railwayState),
+            )
+          ),
         ]),
       );
     }
     return new Scaffold(
-      appBar: new AppBar(title: new Text("BinkyRailways")),
+      appBar: new AppBar(
+        title: new Text(_description),
+          actions: [
+            new IconButton(
+              icon: new Icon(Icons.settings),
+              onPressed: _onConnectionSettings,
+            ),
+          ],
+      ),
       body: new Center(child: new Text("Editing...")),
     );
   }

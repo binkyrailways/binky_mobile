@@ -18,6 +18,7 @@ class StateProperty<T> {
 }
 
 class RailwayState extends PropertyChangeNotifier {
+  StateProperty<String> _description;
   StateProperty<bool> _isRunning;
   StateProperty<bool> _powerActual;
   StateProperty<bool> _powerRequested;
@@ -25,12 +26,16 @@ class RailwayState extends PropertyChangeNotifier {
   StateProperty<bool> _autoLocControlRequested;
 
   RailwayState() {
+    _description = new StateProperty<String>(this, new Symbol("description"), "unknown railway");
     _isRunning = new StateProperty<bool>(this, new Symbol("isRunning"), false);    
     _powerActual = new StateProperty<bool>(this, new Symbol("powerActual"), false);
     _powerRequested = new StateProperty<bool>(this, new Symbol("powerRequested"), false);
     _autoLocControlActual = new StateProperty<bool>(this, new Symbol("autoLocControlActual"), false);
     _autoLocControlRequested = new StateProperty<bool>(this, new Symbol("autoLocControlRequested"), false);
   }
+
+  String get description => _description.value;
+  set description(String value) => _description.value = value;
 
   bool get isRunning => _isRunning.value;
   set isRunning(bool value) => _isRunning.value = value;
@@ -51,6 +56,9 @@ class RailwayState extends PropertyChangeNotifier {
       var msgType = msg["type"];
       print("msg type: $msgType");
       switch (msgType) {
+        case "railway":
+          description = msg["description"] ?? "unknown railway";
+          break; 
         case "editing":
           isRunning = false;
           break;

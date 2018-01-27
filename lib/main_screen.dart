@@ -20,7 +20,7 @@ class MainScreenState extends State<MainScreen> {
       case MainScreenViewState.connect:
         return new ConnectScreen(_onConnected);
       default:
-        return new RailwayScreen(_client);
+        return new RailwayScreen(_client, _onConnectionSettings);
     }
   }
 
@@ -28,6 +28,13 @@ class MainScreenState extends State<MainScreen> {
     setState(() {
       _viewState = MainScreenViewState.main;
       _client = client;
+    });
+  }
+
+  void _onConnectionSettings() {
+    setState(() {
+      _viewState = MainScreenViewState.connect;
+      _client = null;
     });
   }
 }

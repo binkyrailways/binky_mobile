@@ -68,20 +68,26 @@ class RailwayStateControlPanelState extends State<RailwayStateControlPanel> {
     }
     return new Column(children: [
         new Row(children: [
+          new Container( 
+            margin: new EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+            child: new Icon(_powerActual ? Icons.check : Icons.power_settings_new)),
           new Expanded(child: new Text(powerText)),
-          new MaterialButton(
+          new FlatButton(
             child: new Text("On"),
             onPressed: _powerActual ? null : _onPowerOn),
-          new MaterialButton(
+          new FlatButton(
             child: new Text("Off"),
             onPressed: _powerActual ? _onPowerOff : null),
         ]),
         new Row(children: [
+          new Container( 
+            margin: new EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+            child: new Icon(_autoLocControlActual ? Icons.android : Icons.videogame_asset)),
           new Expanded(child: new Text(autoLocControlText)),
-          new MaterialButton(
+          new FlatButton(
             child: new Text("Auto"),
             onPressed: _autoLocControlActual ? null : _onAutoLocControlOn),
-          new MaterialButton(
+          new FlatButton(
             child: new Text("Manual"),
             onPressed: _autoLocControlActual ? _onAutoLocControlOff : null),
         ]),
