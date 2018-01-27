@@ -1,4 +1,4 @@
-package com.example.binkymobile;
+package net.binkyrailways.mobile;
 
 import android.os.Bundle;
 
