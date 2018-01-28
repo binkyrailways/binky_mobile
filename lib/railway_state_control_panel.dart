@@ -82,7 +82,7 @@ class RailwayStateControlPanelState extends State<RailwayStateControlPanel> {
         new Row(children: [
           new Container( 
             margin: new EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
-            child: new Icon(_autoLocControlActual ? Icons.android : Icons.videogame_asset)),
+            child: new Icon(_autoLocControlActual ? Icons.android : Icons.person)),
           new Expanded(child: new Text(autoLocControlText)),
           new FlatButton(
             child: new Text("Auto"),

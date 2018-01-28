@@ -1,21 +1,7 @@
 import 'package:observable/observable.dart';
 
-class StateProperty<T> {
-  PropertyChangeNotifier _notifier; 
-  Symbol _symbol;
-  T _value;
-
-  StateProperty(this._notifier, this._symbol, this._value);
-
-  T get value => _value;
-  set value(T newValue) {
-    if (_value != newValue) {
-      var oldValue = _value;
-      _value = newValue;
-      _notifier.notifyPropertyChange(_symbol, oldValue, newValue);
-    }
-  }
-}
+import 'properties.dart';
+import 'loc_state.dart';
 
 class RailwayState extends PropertyChangeNotifier {
   StateProperty<String> _description;
@@ -24,6 +10,7 @@ class RailwayState extends PropertyChangeNotifier {
   StateProperty<bool> _powerRequested;
   StateProperty<bool> _autoLocControlActual;
   StateProperty<bool> _autoLocControlRequested;
+  StateProperty<List<LocState>> _locs;
 
   RailwayState() {
     _description = new StateProperty<String>(this, new Symbol("description"), "unknown railway");
@@ -32,6 +19,7 @@ class RailwayState extends PropertyChangeNotifier {
     _powerRequested = new StateProperty<bool>(this, new Symbol("powerRequested"), false);
     _autoLocControlActual = new StateProperty<bool>(this, new Symbol("autoLocControlActual"), false);
     _autoLocControlRequested = new StateProperty<bool>(this, new Symbol("autoLocControlRequested"), false);
+    _locs = new StateProperty<List<LocState>>(this, new Symbol("locs"), new List<LocState>());
   }
 
   String get description => _description.value;
@@ -52,12 +40,25 @@ class RailwayState extends PropertyChangeNotifier {
   bool get autoLocControlRequested => _autoLocControlRequested.value;     
   set autoLocControlRequested(bool value) => _autoLocControlRequested.value = value;
 
+  List<LocState> get locs => _locs.value;
+
   void processDataMessage(dynamic msg) {
       var msgType = msg["type"];
       print("msg type: $msgType");
       switch (msgType) {
         case "railway":
           description = msg["description"] ?? "unknown railway";
+          var locs = msg["locs"] ?? [];
+          var locStates = new List<LocState>();
+          for (final l in locs) {
+            var id = l["id"] ?? l["description"] ?? "";
+            var locState = new LocState(id)
+              ..description = l["description"] ?? ""
+              ..owner = l["owner"] ?? "";
+            locStates.add(locState);
+          }
+          locStates.sort((a, b) => a.description.compareTo(b.description));
+          _locs.value = locStates;
           break; 
         case "editing":
           isRunning = false;

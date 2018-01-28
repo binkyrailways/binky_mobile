@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+import 'loc_list_view.dart';
 import 'railway_state.dart';
 import 'railway_state_control_panel.dart';
 import 'server_client.dart';
@@ -61,13 +62,16 @@ class RailwayScreenState extends State<RailwayScreen> {
           ],
         ),
         body: new Column(children: [
-          new Card(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: new RailwayStateControlPanel(_client, _railwayState),
-            )
+          new Container(
+            margin: new EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: new RailwayStateControlPanel(_client, _railwayState),
           ),
-        ]),
+          new Divider(height: 1.0),
+          new Flexible(child: new Container(
+              margin: new EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: new LocListView(_client, _railwayState.locs),
+            )
+        )]),
       );
     }
     return new Scaffold(
