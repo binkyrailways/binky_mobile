@@ -21,10 +21,14 @@ class LocListItemState extends State<LocListItem> {
   StreamSubscription<List<ChangeRecord>> _subscription;
   String _description;
   String _owner;
+  String _stateText;
+  String _speedText;
 
   LocListItemState(this._client, this._loc) {
     _description = _loc.description;
     _owner = _loc.owner;
+    _stateText = _loc.stateText;
+    _speedText = _loc.speedText;
   }
 
   @override
@@ -50,9 +54,16 @@ class LocListItemState extends State<LocListItem> {
   Widget build(BuildContext context) {
     return new Container(
       margin: new EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-      child: new Row(children: [
-        new Expanded(child: new Text(_description)),
-        new Text(_owner)
-    ]));
+      child: new Column(children: [
+        new Row(children: [
+          new Expanded(child: new Text(_description)),
+          new Text(_loc.stateText)
+        ]),
+        new Row(children: [
+          new Expanded(child: new Text(_owner)),
+          new Text(_loc.speedText)
+        ]),
+      ])
+    );
   }
 }

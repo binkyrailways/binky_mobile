@@ -54,10 +54,14 @@ class RailwayState extends PropertyChangeNotifier {
             var id = l["id"] ?? l["description"] ?? "";
             var locState = new LocState(id)
               ..description = l["description"] ?? ""
-              ..owner = l["owner"] ?? "";
+              ..owner = l["owner"] ?? ""
+              ..speedText = l["speedText"] ?? ""
+              ..stateText = l["stateText"] ?? ""
+              ..isAssigned = l["isAssigned"] ?? false
+              ;
             locStates.add(locState);
           }
-          locStates.sort((a, b) => a.description.compareTo(b.description));
+          locStates.sort((a, b) => a.compareTo(b));
           _locs.value = locStates;
           break; 
         case "editing":
