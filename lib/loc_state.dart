@@ -8,14 +8,15 @@ class LocState extends PropertyChangeNotifier {
   StateProperty<String> _speedText;
   StateProperty<String> _stateText;
   StateProperty<bool> _isAssigned;
-  
 
   LocState(this._id) {
-    _description = new StateProperty<String>(this, new Symbol("description"), "unknown railway");
+    _description = new StateProperty<String>(
+        this, new Symbol("description"), "unknown railway");
     _owner = new StateProperty<String>(this, new Symbol("owner"), "");
     _speedText = new StateProperty<String>(this, new Symbol("speedText"), "");
     _stateText = new StateProperty<String>(this, new Symbol("stateText"), "");
-    _isAssigned = new StateProperty<bool>(this, new Symbol("isAssigned"), false);
+    _isAssigned =
+        new StateProperty<bool>(this, new Symbol("isAssigned"), false);
   }
 
   int compareTo(LocState other) {
@@ -29,6 +30,14 @@ class LocState extends PropertyChangeNotifier {
       return rc;
     }
     return owner.compareTo(other.owner);
+  }
+
+  void loadFromLocMessage(dynamic msg) {
+    description = msg["description"] ?? "";
+    owner = msg["owner"] ?? "";
+    speedText = msg["speedText"] ?? "";
+    stateText = msg["stateText"] ?? "";
+    isAssigned = msg["isAssigned"] ?? false;
   }
 
   String get id => _id;
