@@ -8,6 +8,7 @@ class LocState extends PropertyChangeNotifier {
   StateProperty<String> _speedText;
   StateProperty<String> _stateText;
   StateProperty<bool> _isAssigned;
+  StateProperty<bool> _isCurrentRouteDurationExceeded;
 
   LocState(this._id) {
     _description = new StateProperty<String>(
@@ -17,6 +18,7 @@ class LocState extends PropertyChangeNotifier {
     _stateText = new StateProperty<String>(this, new Symbol("stateText"), "");
     _isAssigned =
         new StateProperty<bool>(this, new Symbol("isAssigned"), false);
+    _isCurrentRouteDurationExceeded = new StateProperty<bool>(this, new Symbol("isCurrentRouteDurationExceeded"), false);
   }
 
   int compareTo(LocState other) {
@@ -37,7 +39,8 @@ class LocState extends PropertyChangeNotifier {
     owner = msg["owner"] ?? "";
     speedText = msg["speedText"] ?? "";
     stateText = msg["stateText"] ?? "";
-    isAssigned = msg["isAssigned"] ?? false;
+    isAssigned = msg["is-assigned"] ?? false;
+    isCurrentRouteDurationExceeded = msg["is-current-route-duration-exceeded"] ?? false;
   }
 
   String get id => _id;
@@ -56,4 +59,7 @@ class LocState extends PropertyChangeNotifier {
 
   bool get isAssigned => _isAssigned.value;
   set isAssigned(bool value) => _isAssigned.value = value;
+
+  bool get isCurrentRouteDurationExceeded => _isCurrentRouteDurationExceeded.value;
+  set isCurrentRouteDurationExceeded(bool value) => _isCurrentRouteDurationExceeded.value = value;
 }

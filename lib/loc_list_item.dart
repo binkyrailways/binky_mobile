@@ -16,20 +16,12 @@ class LocListItem extends StatefulWidget {
 }
 
 class LocListItemState extends State<LocListItem> {
+  final TextStyle unassignedStyle = new TextStyle(color: Colors.grey);
   final ServerClient _client;
   final LocState _loc;
   StreamSubscription<List<ChangeRecord>> _subscription;
-  String _description;
-  String _owner;
-  String _stateText;
-  String _speedText;
 
-  LocListItemState(this._client, this._loc) {
-    _description = _loc.description;
-    _owner = _loc.owner;
-    _stateText = _loc.stateText;
-    _speedText = _loc.speedText;
-  }
+  LocListItemState(this._client, this._loc);
 
   @override
   void initState() {
@@ -44,24 +36,23 @@ class LocListItemState extends State<LocListItem> {
   }
 
   void onLocStateChanged(List<ChangeRecord> c) {
-    setState(() {
-      _description = _loc.description;
-      _owner = _loc.owner;
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final style = _loc.isAssigned ? null : unassignedStyle;
     return new Container(
       margin: new EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+      decoration: new BoxDecoration(color: _loc.isCurrentRouteDurationExceeded ? Colors.red : null),
       child: new Column(children: [
         new Row(children: [
-          new Expanded(child: new Text(_description)),
-          new Text(_loc.stateText)
+          new Expanded(child: new Text(_loc.description, style: style)),
+          new Text(_loc.stateText, style: style)
         ]),
         new Row(children: [
-          new Expanded(child: new Text(_owner)),
-          new Text(_loc.speedText)
+          new Expanded(child: new Text(_loc.owner, style: style)),
+          new Text(_loc.speedText, style: style)
         ]),
       ])
     );

@@ -24,7 +24,7 @@ class ServerClient {
       });
       client.subscribe(topic + "/data", QOS_0, (t, d) {
         var msg = JSON.decode(d);
-        print("topic: $t, data: $msg");
+        //print("topic: $t, data: $msg");
         controller.add(msg);
       }); 
       return new ServerClient(client, topic, controller.stream);

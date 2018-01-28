@@ -28,11 +28,15 @@ class RailwayState extends PropertyChangeNotifier {
   bool get isRunning => _isRunning.value;
   set isRunning(bool value) => _isRunning.value = value;
 
+  bool get powerConsistent => _powerActual.value == _powerRequested.value;
+
   bool get powerActual => _powerActual.value;
   set powerActual(bool value) => _powerActual.value = value;
 
   bool get powerRequested => _powerRequested.value;
   set powerRequested(bool value) => _powerRequested.value = value;
+
+  bool get autoLocControlConsistent => _autoLocControlActual.value == _autoLocControlRequested.value;
 
   bool get autoLocControlActual => _autoLocControlActual.value; 
   set autoLocControlActual(bool value) => _autoLocControlActual.value = value; 
@@ -66,12 +70,12 @@ class RailwayState extends PropertyChangeNotifier {
           isRunning = true;
           break;
         case "power-changed":
-          powerActual = msg["actual"];
-          powerRequested = msg["requested"];
+          powerActual = msg["actual"] ?? false;
+          powerRequested = msg["requested"] ?? false;
           break;
         case "automatic-loccontroller-changed":
-          autoLocControlActual = msg["actual"];
-          autoLocControlRequested = msg["requested"];
+          autoLocControlActual = msg["actual"] ?? false;
+          autoLocControlRequested = msg["requested"] ?? false;
           break;
         case "loc-changed":
           var l = msg["loc"] ?? {};
