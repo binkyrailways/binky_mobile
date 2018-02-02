@@ -44,7 +44,7 @@ class LocListItemState extends State<LocListItem> {
     final style = _loc.isAssigned ? null : unassignedStyle;
     return new Container(
       margin: new EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-      decoration: new BoxDecoration(color: _loc.isCurrentRouteDurationExceeded ? Colors.red : null),
+      decoration: new BoxDecoration(color: _loc.isCurrentRouteDurationExceeded ? Colors.red : _loc.hasPossibleDeadlock ? Colors.orange : null),
       child: new Column(children: [
         new Row(children: [
           new Expanded(child: new Text(_loc.description, style: style)),

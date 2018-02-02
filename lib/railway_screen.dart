@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'loc_list_view.dart';
+import 'loc_state.dart';
 import 'railway_state.dart';
 import 'railway_state_control_panel.dart';
 import 'server_client.dart';
@@ -21,7 +22,6 @@ class RailwayScreenState extends State<RailwayScreen> {
   final VoidCallback _onConnectionSettings;
   final RailwayState _railwayState = new RailwayState();
   String _description = "Binky Railways";
-  bool _isRunning = false;
   StreamSubscription<dynamic> _clientSubscription;
 
   // Default ctor
@@ -44,13 +44,12 @@ class RailwayScreenState extends State<RailwayScreen> {
     _railwayState.processDataMessage(msg);
     setState(() {
       _description = _railwayState.description;
-      _isRunning = _railwayState.isRunning;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isRunning) {
+    if (_railwayState.isRunning) {
       return new Scaffold(
         appBar: new AppBar(
           title: new Text(_description),

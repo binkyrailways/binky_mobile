@@ -56,7 +56,7 @@ class RailwayState extends PropertyChangeNotifier {
           var locStates = new List<LocState>();
           for (final l in locs) {
             var id = l["id"] ?? l["description"] ?? "";
-            var locState = new LocState(id)
+            var locState = new LocState(id, _onNotifyLocsChanged)
               ..loadFromLocMessage(l);
             locStates.add(locState);
           }
@@ -85,6 +85,9 @@ class RailwayState extends PropertyChangeNotifier {
             locState.loadFromLocMessage(l);
           }
       }
+  }
 
+  void _onNotifyLocsChanged() {
+    _locs.notifyPropertyChange(_locs.value, _locs.value);
   }
 }
