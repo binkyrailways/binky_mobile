@@ -86,6 +86,16 @@ class LocBottomSheetState extends State<LocBottomSheet> {
                 )),
               ],
             ),
+            new Row(
+              children: [
+                new Expanded(child: new Slider(
+                  min: 0.0,
+                  max: 100.0,
+                  value: _loc.speed.toDouble(),
+                  onChanged: _onSpeedChanged,
+                )),
+              ],
+            ),
             new Divider(height: 32.0),
             new Row(
               children: !_loc.isAssigned ? [] : [
@@ -121,5 +131,9 @@ class LocBottomSheetState extends State<LocBottomSheet> {
 
   void _onForward() {
     _client.publishControlMessage({"type": "direction-forward", "id": _loc.id});
+  }
+
+  void _onSpeedChanged(double value) {
+    _client.publishControlMessage({"type": "speed", "id": _loc.id, "speed": value.round()});    
   }
 }

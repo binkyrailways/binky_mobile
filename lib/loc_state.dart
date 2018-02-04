@@ -7,6 +7,7 @@ class LocState extends PropertyChangeNotifier {
   String _id;
   StateProperty<String> _description;
   StateProperty<String> _owner;
+  StateProperty<int> _speed;
   StateProperty<String> _speedText;
   StateProperty<String> _stateText;
   StateProperty<String> _direction;
@@ -19,6 +20,7 @@ class LocState extends PropertyChangeNotifier {
     _description = new StateProperty<String>(
         this, new Symbol("description"), "unknown railway");
     _owner = new StateProperty<String>(this, new Symbol("owner"), "");
+    _speed = new StateProperty<int>(this, new Symbol("speed"), 0);
     _speedText = new StateProperty<String>(this, new Symbol("speedText"), "");
     _stateText = new StateProperty<String>(this, new Symbol("stateText"), "");
     _direction = new StateProperty<String>(this, new Symbol("direction"), "forward");
@@ -45,6 +47,7 @@ class LocState extends PropertyChangeNotifier {
   void loadFromLocMessage(dynamic msg) {
     description = msg["description"] ?? "";
     owner = msg["owner"] ?? "";
+    speed = msg["speed"] ?? 0;
     speedText = msg["speedText"] ?? "";
     stateText = msg["stateText"] ?? "";
     direction = msg["direction"] ?? "forward";
@@ -61,6 +64,9 @@ class LocState extends PropertyChangeNotifier {
 
   String get owner => _owner.value;
   set owner(String value) => _owner.value = value;
+
+  int get speed => _speed.value;
+  set speed(int value) => _speed.value = value;
 
   String get speedText => _speedText.value;
   set speedText(String value) => _speedText.value = value;
