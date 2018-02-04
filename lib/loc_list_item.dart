@@ -9,7 +9,7 @@ class LocListItem extends StatefulWidget {
   final ServerClient _client;
   final LocState _loc;
 
-  LocListItem(this._client, this._loc);
+  LocListItem(this._client, this._loc) : super(key: new Key(_loc.id));
 
   @override
   State createState() => new LocListItemState(_client, this._loc);

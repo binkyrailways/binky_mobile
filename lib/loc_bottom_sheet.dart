@@ -71,7 +71,7 @@ class LocBottomSheetState extends State<LocBottomSheet> {
               ],
             ),
             new Row(
-              children: !_loc.isAssigned ? [] : [
+              children: [
                 new Expanded(child: new FlatButton(
                   child: new Text("Reverse"),
                   onPressed: _loc.direction == "forward" ? _onReverse : null,

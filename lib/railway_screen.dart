@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:observable/observable.dart';
 
+import 'block_list_view.dart';
 import 'loc_list_view.dart';
 import 'loc_state.dart';
 import 'railway_state.dart';
@@ -23,7 +25,9 @@ class RailwayScreenState extends State<RailwayScreen> {
   final RailwayState _railwayState = new RailwayState();
   String _description = "Binky Railways";
   String _modelTime = "";
+  String _view = "locs";
   StreamSubscription<dynamic> _clientSubscription;
+  StreamSubscription<List<ChangeRecord>> _subscription;
 
   // Default ctor
   RailwayScreenState(this._client, this._onConnectionSettings);
@@ -33,12 +37,18 @@ class RailwayScreenState extends State<RailwayScreen> {
     super.initState();
     _clientSubscription = _client.messages.listen(_processDataMessage);
     _client.publishControlMessage({"type": "refresh"});
+    _subscription = _railwayState.changes.listen(onRailwayStateChanged);
   }
 
   @override  
   void dispose() {
     _clientSubscription.cancel();
+    _subscription.cancel();
     super.dispose();
+  }
+
+  void onRailwayStateChanged(List<ChangeRecord> c) {
+    setState(() {});
   }
 
   void _processDataMessage(dynamic msg) {
@@ -69,12 +79,22 @@ class RailwayScreenState extends State<RailwayScreen> {
                 child: new Text(_description)
               ),
               new ListTile(
-                leading: new Icon(Icons.play_arrow),
+                leading: new Icon(Icons.directions_railway),
                 title: new Text('Locs'),
+                selected: _view == "locs",
                 onTap: () {
-                  // change app state...
+                  setState(() => _view = "locs");
                   Navigator.pop(context); // close the drawer
                 },
+              ),
+              new ListTile(
+                leading: new Icon(Icons.my_location),
+                title: new Text('Blocks'),
+                selected: _view == "blocks",
+                onTap: () {
+                  setState(() => _view = "blocks");
+                  Navigator.pop(context); // close the drawer
+                },                
               )
             ],
           )
@@ -87,7 +107,9 @@ class RailwayScreenState extends State<RailwayScreen> {
           new Divider(height: 1.0),
           new Flexible(child: new Container(
               margin: new EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: new LocListView(_client, _railwayState.locs),
+              child: _view == "blocks" ? 
+                new BlockListView(_client, _railwayState.blocks) :
+                new LocListView(_client, _railwayState.locs),
             )
         )]),
       );

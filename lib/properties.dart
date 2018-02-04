@@ -19,9 +19,9 @@ class StateProperty<T> {
   }
 
   void notifyPropertyChange(T oldValue, T newValue) {
-      _notifier.notifyPropertyChange(_symbol, oldValue, newValue);    
       if (_additionalChangeCallback != null) {
         _additionalChangeCallback();
       }
+      _notifier.notifyPropertyChange(_symbol, oldValue, newValue);    
   }
 }

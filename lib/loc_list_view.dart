@@ -11,7 +11,7 @@ class LocListView extends StatefulWidget {
   final ServerClient _client;
   final List<LocState> _locs;
 
-  LocListView(this._client, this._locs);
+  LocListView(this._client, this._locs) : super(key: new Key(_locs.hashCode.toString()));
 
   @override
   State createState() => new LocListViewState(_client, this._locs);
@@ -29,9 +29,9 @@ class LocListViewState extends State<LocListView> {
   Widget build(BuildContext context) {
     return new ListView.builder(
       padding: new EdgeInsets.all(8.0),
-      itemBuilder: (_, int index) => new GestureDetector(
+      itemBuilder: (ctx, int index) => new GestureDetector(
         child: new LocListItem(_client, _locs[index]), 
-        onTap: () => _onItemTapped(context, index)),
+        onTap: () => _onItemTapped(ctx, index)),
       itemCount: _locs.length,
     );
   }

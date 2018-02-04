@@ -53,11 +53,14 @@ class RailwayState extends PropertyChangeNotifier {
   set autoLocControlRequested(bool value) => _autoLocControlRequested.value = value;
 
   List<LocState> get locs => _locs.value;
+  set locs(List<LocState> value) => _locs.value = value;
+
   List<BlockState> get blocks => _blocks.value;
+  set blocks(List<BlockState> value) => _blocks.value = value;
 
   void processDataMessage(dynamic msg) {
       var msgType = msg["type"];
-      print("msg type: $msgType");
+      //print("msg type: $msgType");
       switch (msgType) {
         case "railway":
           description = msg["description"] ?? "unknown railway";
@@ -70,17 +73,17 @@ class RailwayState extends PropertyChangeNotifier {
             locStates.add(locState);
           }
           locStates.sort((a, b) => a.compareTo(b));
-          _locs.value = locStates;
+          this.locs = locStates;
           var blocks = msg["blocks"] ?? [];
           var blockStates = new List<BlockState>();
           for (final b in blocks) {
             var id = b["id"] ?? b["description"] ?? "";
-            var blockState = new BlockState(id)
+            var blockState = new BlockState(this, id)
               ..loadFromBlockMessage(b);
             blockStates.add(blockState);
           }
           blockStates.sort((a, b) => a.compareTo(b));
-          _blocks.value = blockStates;
+          this.blocks = blockStates;
           break; 
         case "editing":
           isRunning = false;
@@ -101,6 +104,14 @@ class RailwayState extends PropertyChangeNotifier {
           autoLocControlActual = msg["actual"] ?? false;
           autoLocControlRequested = msg["requested"] ?? false;
           break;
+        case "block-changed":
+          var b = msg["block"] ?? {};
+          var id = b["id"];
+          var blockState = blocks.firstWhere((bs) => bs.id == id, orElse: () => null); 
+          if (blockState != null) {
+            blockState.loadFromBlockMessage(b);
+          }
+          break;
         case "loc-changed":
           var l = msg["loc"] ?? {};
           var id = l["id"];
@@ -108,10 +119,11 @@ class RailwayState extends PropertyChangeNotifier {
           if (locState != null) {
             locState.loadFromLocMessage(l);
           }
+          break;
       }
   }
 
   void _onNotifyLocsChanged() {
-    _locs.notifyPropertyChange(_locs.value, _locs.value);
+    locs.sort((a, b) => a.compareTo(b));
   }
 }
