@@ -78,7 +78,7 @@ class LocBottomSheetState extends State<LocBottomSheet> {
                 )),
                 new Expanded(child: new FlatButton(
                   child: new Text("Stop"),
-                  onPressed: null,
+                  onPressed: _onStop,
                 )),
                 new Expanded(child: new FlatButton(
                   child: new Text("Forward"),
@@ -131,6 +131,10 @@ class LocBottomSheetState extends State<LocBottomSheet> {
 
   void _onForward() {
     _client.publishControlMessage({"type": "direction-forward", "id": _loc.id});
+  }
+
+  void _onStop() {
+    _client.publishControlMessage({"type": "speed", "id": _loc.id, "speed": 0});    
   }
 
   void _onSpeedChanged(double value) {

@@ -46,8 +46,10 @@ class LocListViewState extends State<LocListView> {
       _bottomSheetLoc = loc;
       _bottomSheetController = Scaffold.of(context).showBottomSheet<LocBottomSheet>((c) => new LocBottomSheet(_client, loc));
       _bottomSheetController.closed.then((x) {
-        _bottomSheetLoc = null;
-        _bottomSheetController = null;
+        if (_bottomSheetLoc == loc) {
+          _bottomSheetLoc = null;
+          _bottomSheetController = null;
+        }
       });
     }
   }

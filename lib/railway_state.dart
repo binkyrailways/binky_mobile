@@ -1,6 +1,7 @@
 import 'package:observable/observable.dart';
 
 import 'properties.dart';
+import 'block_state.dart';
 import 'loc_state.dart';
 
 class RailwayState extends PropertyChangeNotifier {
@@ -11,6 +12,8 @@ class RailwayState extends PropertyChangeNotifier {
   StateProperty<bool> _autoLocControlActual;
   StateProperty<bool> _autoLocControlRequested;
   StateProperty<List<LocState>> _locs;
+  StateProperty<List<BlockState>> _blocks;
+  StateProperty<String> _modelTime;
 
   RailwayState() {
     _description = new StateProperty<String>(this, new Symbol("description"), "unknown railway");
@@ -20,10 +23,15 @@ class RailwayState extends PropertyChangeNotifier {
     _autoLocControlActual = new StateProperty<bool>(this, new Symbol("autoLocControlActual"), false);
     _autoLocControlRequested = new StateProperty<bool>(this, new Symbol("autoLocControlRequested"), false);
     _locs = new StateProperty<List<LocState>>(this, new Symbol("locs"), new List<LocState>());
+    _blocks = new StateProperty<List<BlockState>>(this, new Symbol("blocks"), new List<BlockState>());
+    _modelTime = new StateProperty<String>(this, new Symbol("modelTime"), "");
   }
 
   String get description => _description.value;
   set description(String value) => _description.value = value;
+
+  String get modelTime => _modelTime.value;
+  set modelTime(String value) => _modelTime.value = value;
 
   bool get isRunning => _isRunning.value;
   set isRunning(bool value) => _isRunning.value = value;
@@ -45,6 +53,7 @@ class RailwayState extends PropertyChangeNotifier {
   set autoLocControlRequested(bool value) => _autoLocControlRequested.value = value;
 
   List<LocState> get locs => _locs.value;
+  List<BlockState> get blocks => _blocks.value;
 
   void processDataMessage(dynamic msg) {
       var msgType = msg["type"];
@@ -62,12 +71,27 @@ class RailwayState extends PropertyChangeNotifier {
           }
           locStates.sort((a, b) => a.compareTo(b));
           _locs.value = locStates;
+          var blocks = msg["blocks"] ?? [];
+          var blockStates = new List<BlockState>();
+          for (final b in blocks) {
+            var id = b["id"] ?? b["description"] ?? "";
+            var blockState = new BlockState(id)
+              ..loadFromBlockMessage(b);
+            blockStates.add(blockState);
+          }
+          blockStates.sort((a, b) => a.compareTo(b));
+          _blocks.value = blockStates;
           break; 
         case "editing":
           isRunning = false;
           break;
         case "running":
           isRunning = true;
+          break;
+        case "time-changed":
+          var h = msg["hour"] ?? 0;
+          var m = (msg["minute"] ?? 0).toString().padLeft(2, "0");
+          modelTime = "$h:$m";
           break;
         case "power-changed":
           powerActual = msg["actual"] ?? false;

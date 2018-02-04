@@ -22,6 +22,7 @@ class RailwayScreenState extends State<RailwayScreen> {
   final VoidCallback _onConnectionSettings;
   final RailwayState _railwayState = new RailwayState();
   String _description = "Binky Railways";
+  String _modelTime = "";
   StreamSubscription<dynamic> _clientSubscription;
 
   // Default ctor
@@ -44,6 +45,7 @@ class RailwayScreenState extends State<RailwayScreen> {
     _railwayState.processDataMessage(msg);
     setState(() {
       _description = _railwayState.description;
+      _modelTime = _railwayState.modelTime;
     });
   }
 
@@ -52,13 +54,30 @@ class RailwayScreenState extends State<RailwayScreen> {
     if (_railwayState.isRunning) {
       return new Scaffold(
         appBar: new AppBar(
-          title: new Text(_description),
+          title: new Text(_modelTime),
           actions: [
             new IconButton(
               icon: new Icon(Icons.settings),
               onPressed: _onConnectionSettings,
             ),
           ],
+        ),
+        drawer: new Drawer(
+          child: new ListView(
+            children: <Widget>[
+              new DrawerHeader(
+                child: new Text(_description)
+              ),
+              new ListTile(
+                leading: new Icon(Icons.play_arrow),
+                title: new Text('Locs'),
+                onTap: () {
+                  // change app state...
+                  Navigator.pop(context); // close the drawer
+                },
+              )
+            ],
+          )
         ),
         body: new Column(children: [
           new Container(
